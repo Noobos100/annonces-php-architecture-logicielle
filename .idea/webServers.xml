@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="7ac022a9-0bfb-4bee-9287-572af8221490" name="Annonces AlwaysData" url="http://cdaw.alwaysdata.net/annonces/">
+        <fileTransfer rootFolder="/home/cdaw/www/annonces/" accessType="SFTP" host="ssh-cdaw.alwaysdata.net" port="22" sshConfigId="1a9c9256-e209-4984-af41-966f5789e1ed" sshConfig="cdaw@ssh-cdaw.alwaysdata.net:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
