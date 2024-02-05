@@ -13,12 +13,11 @@ include_once 'gui/ViewAnnonces.php';
 include_once 'gui/ViewPost.php';
 include_once 'gui/ViewSignup.php';
 include_once 'gui/Layout.php';
-include_once 'gui/ViewSignupSuccess.php';
 include_once 'gui/ViewCreate.php';
 
 use control\{Controllers, Presenter};
 use data\DataAccess;
-use gui\{Layout, ViewAnnonces, ViewCreate, ViewLogin, ViewPost, ViewSignup, ViewSignupSuccess};
+use gui\{Layout, ViewAnnonces, ViewLogin, ViewPost, ViewSignup};
 use service\AnnoncesChecking;
 
 $data = null;
@@ -94,15 +93,23 @@ elseif ( '/annonces/index.php/signupsuccess' == $uri) {
     }
     $vueSignupSuccess->display();
 }
-elseif ('/annonces/index.php/create' == $uri) {
-    $layout = new Layout("gui/layout.html" );
-    $vueCreate= new ViewCreate( $layout );
 
-    $vueCreate->display();
+// Si l'utilisateur a réussi à créer une annonce, il est redirigé vers la page des annonces
+elseif ('/annonces/index.php/createsuccess' == $uri) {
+    $result = $controller->createAction($_POST['title'], $_POST['content'], $_POST['login'], $data, $annoncesCheck);
+    $layout = new Layout("gui/layout.html");
+
+    $vueAnnonces = new ViewAnnonces($layout, $_POST['login'], $presenter);
+
+    if ($result) {
+        $vueAnnonces->display();
+    } else {
+        // Display an error message on the existing ViewAnnonces page
+        $vueAnnonces->displayErrorMessage("Failed to create the post. Please check your input.");
+    }
 }
+
 else {
     header('Status: 404 Not Found');
-    echo '<html><body><h1> Error 404: Page Not Found</h1></body></html>';
+    echo '<html lang="en"><body><h1> Error 404: Page Not Found</h1></body></html>';
 }
-
-?>

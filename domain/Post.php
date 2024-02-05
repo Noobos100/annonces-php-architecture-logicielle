@@ -7,6 +7,7 @@ class Post
     protected $title;
     protected $body;
     protected $date;
+    protected $author;
 
     public function __construct($id, $title, $body, $date)
     {
@@ -19,6 +20,11 @@ class Post
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getAuthor()
+    {
+        return $this->author;
     }
 
     public function getTitle()

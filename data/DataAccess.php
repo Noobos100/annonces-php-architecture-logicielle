@@ -42,11 +42,11 @@ class DataAccess implements DataAccessInterface
 
     public function getAllAnnonces()
     {
-        $result = $this->dataAccess->query('SELECT * FROM Post');
+        $result = $this->dataAccess->query('SELECT * FROM Post ORDER BY date DESC');
         $annonces = array();
 
         while ($row = $result->fetch()) {
-            $currentPost = new Post($row['id'], $row['title'], $row['body'], $row['date']);
+            $currentPost = new Post($row['id'], $row['title'], $row['content'], $row['date']);
             $annonces[] = $currentPost;
         }
 
@@ -61,7 +61,7 @@ class DataAccess implements DataAccessInterface
         $result = $this->dataAccess->query('SELECT * FROM Post WHERE id=' . $id);
         $row = $result->fetch();
 
-        $post = new Post($row['id'], $row['title'], $row['body'], $row['date']);
+        $post = new Post($row['id'], $row['title'], $row['content'], $row['date']);
 
         $result->closeCursor();
 
@@ -79,12 +79,26 @@ class DataAccess implements DataAccessInterface
 
     public function addUser($login, $password, $name, $surname){
         $query = 'INSERT INTO Users (login, password, name, surname) VALUES ("' . $login . '", "' . $password . '", "' . $name . '", "' . $surname . '")';
+
+        $statement = $this->dataAccess->prepare($query);
+        if ($statement->execute() === false) {
+            $statement->closeCursor();
+            return false;
+        }
+
         $result = $this->dataAccess->query($query);
         $result->closeCursor();
     }
 
-    public function addPost($title, $body){
-        $query = 'INSERT INTO Post (title, body, date) VALUES ("' . $title . '", "' . $body . '", NOW())';
+    public function addPost($title, $content, $login){
+        $query = 'INSERT INTO Post (title, content, login) VALUES ("' . $title . '", "' . $content . '", "' . $login . '")';
+
+        $statement = $this->dataAccess->prepare($query);
+        if ($statement->execute() === false) {
+            $statement->closeCursor();
+            return false;
+        }
+
         $result = $this->dataAccess->query($query);
         $result->closeCursor();
     }

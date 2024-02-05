@@ -8,4 +8,5 @@ interface DataAccessInterface
     public function getAllAnnonces();
     public function getPost($id);
     public function addUser($login, $password, $name, $surname);
+    public function addPost($title, $content, $login);
 }

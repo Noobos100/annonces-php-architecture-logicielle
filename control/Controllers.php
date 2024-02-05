@@ -9,7 +9,7 @@ include_once "service/AnnoncesChecking.php";
 
 class Controllers
 {
-    public function loginAction()
+    public function loginAction(): void
     {
         $layout = new Layout("gui/layout.html");
         $vueLogin = new ViewLogin($layout);
@@ -17,7 +17,7 @@ class Controllers
         $vueLogin->display();
     }
 
-    public function annoncesAction($login, $password, $data, $annoncesCheck)
+    public function annoncesAction($login, $password, $data, $annoncesCheck): void
     {
 
         if ($annoncesCheck->authenticate($login, $password, $data))
@@ -25,12 +25,12 @@ class Controllers
 
     }
 
-    public function postAction($id, $data, $annoncesCheck)
+    public function postAction($id, $data, $annoncesCheck): void
     {
         $annoncesCheck->getPost($id, $data);
     }
 
-    public function signupAction($login, $password, $name, $surname, $data, $annoncesCheck)
+    public function signupAction($login, $password, $name, $surname, $data, $annoncesCheck): bool
     {
         if ($annoncesCheck->checkUser($login, $password, $name, $surname, $data)) {
             $data->addUser($login, $password, $name, $surname);
@@ -38,4 +38,14 @@ class Controllers
         }
         else return false;
     }
+
+    public function createAction($title, $content, $login, $data, $annoncesCheck): bool
+    {
+        if ($annoncesCheck->checkPost($title, $content, $login)) {
+            $data->addPost($title, $content, $login);
+            return true;
+        }
+        else return false;
+    }
+
 }

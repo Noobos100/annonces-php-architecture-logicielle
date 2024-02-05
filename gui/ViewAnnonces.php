@@ -15,8 +15,15 @@ class ViewAnnonces extends View
         }
 
         $this->title = 'Exemple Annonces Basic PHP: Annonces';
-        $this->content = '<p>Hello ' . $login . '</p>';
+        $this->content = '<p>You are logged in as: <b>' . $login . '</b></p>';
+        $this->content.= new ViewCreate($layout, $login);
 
         $this->content.= $presenter->getAllAnnoncesHTML();
+    }
+
+    public function displayErrorMessage($message) {
+        // You can customize this to display the error message in the existing content
+        echo '<p style="color: red;">' . $message . '</p>';
+        $this->display();
     }
 }

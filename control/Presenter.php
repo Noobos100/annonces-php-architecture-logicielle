@@ -32,6 +32,7 @@ class Presenter
             $post = $this->annoncesCheck->getAnnoncesTxt()[0];
 
             $content = '<h1>' . $post['title'] . '</h1>';
+            $content .= '<div class="author">' . $post['author'] . '</div>';
             $content .= '<div class="date">' . $post['date'] . '</div>';
             $content .= '<div class="body">' . $post['body'] . '</div>';
         }
