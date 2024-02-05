@@ -14,10 +14,11 @@ include_once 'gui/ViewPost.php';
 include_once 'gui/ViewSignup.php';
 include_once 'gui/Layout.php';
 include_once 'gui/ViewSignupSuccess.php';
+include_once 'gui/ViewCreate.php';
 
 use control\{Controllers, Presenter};
 use data\DataAccess;
-use gui\{Layout, ViewAnnonces, ViewLogin, ViewPost, ViewSignup, ViewSignupSuccess};
+use gui\{Layout, ViewAnnonces, ViewCreate, ViewLogin, ViewPost, ViewSignup, ViewSignupSuccess};
 use service\AnnoncesChecking;
 
 $data = null;
@@ -82,18 +83,22 @@ elseif ( '/annonces/index.php/signup' == $uri) {
 elseif ( '/annonces/index.php/signupsuccess' == $uri) {
 
     $result = $controller->signupAction($_POST['username'], $_POST['password'], $_POST['name'], $_POST['surname'], $data, $annoncesCheck);
+    $layout = new Layout("gui/layout.html" );
     if ($result) {
-        $layout = new Layout("gui/layout.html" );
         $vueSignupSuccess= new ViewLogin( $layout );
 
-        $vueSignupSuccess->display();
     }
     else {
-        $layout = new Layout("gui/layout.html" );
         $vueSignupSuccess= new ViewSignup( $layout );
 
-        $vueSignupSuccess->display();
     }
+    $vueSignupSuccess->display();
+}
+elseif ('/annonces/index.php/create' == $uri) {
+    $layout = new Layout("gui/layout.html" );
+    $vueCreate= new ViewCreate( $layout );
+
+    $vueCreate->display();
 }
 else {
     header('Status: 404 Not Found');

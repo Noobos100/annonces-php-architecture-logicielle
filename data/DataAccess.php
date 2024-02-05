@@ -82,4 +82,10 @@ class DataAccess implements DataAccessInterface
         $result = $this->dataAccess->query($query);
         $result->closeCursor();
     }
+
+    public function addPost($title, $body){
+        $query = 'INSERT INTO Post (title, body, date) VALUES ("' . $title . '", "' . $body . '", NOW())';
+        $result = $this->dataAccess->query($query);
+        $result->closeCursor();
+    }
 }
