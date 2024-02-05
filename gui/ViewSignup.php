@@ -9,9 +9,8 @@ class ViewSignup extends View
         parent::__construct($layout);
 
         $this->title = 'Exemple Annonces Basic PHP: Signup';
-        // mot de passe fort (au moins 12 caractères, avec lettres minuscules et majuscules, chiffres et caractères spéciaux)
         $this->content = '
-            <form method="post" action="/annonces/index.php/signupsucess">
+            <form method="post" action="/annonces/index.php/signupsuccess">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required>
                 <br>

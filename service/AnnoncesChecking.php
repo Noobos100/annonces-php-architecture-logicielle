@@ -32,15 +32,10 @@ class AnnoncesChecking
         $this->annoncesTxt[] = array('id' => $post->getId(), 'title' => $post->getTitle(), 'body' => $post->getBody(), 'date' => $post->getDate());
     }
 
-    public function addUser($login, $password, $name, $surname, $data)
+    public function checkUser($login, $password, $name, $surname, $data)
     {
-        // vérifie que login (identifiant unique), mot de passe fort (au moins 12 caractères, avec lettres minuscules et majuscules, chiffres et caractères spéciaux),
+        // vérifie que login n'existe pas deja avec getLogin + mot de passe fort (au moins 12 caractères, avec lettres minuscules et majuscules, chiffres et caractères spéciaux),
         // nom et prénom ne doivent pas être vides
-        if (preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{12,}$/', $password) && !empty($login) && !empty($name) && !empty($surname)) {
-            $data->addUser($login, $password, $name, $surname);
-            return true;
-        } else {
-            return false;
-        }
+        return ($data->getLogins($login) == null && preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/', $password) && !empty($name) && !empty($surname));
     }
 }

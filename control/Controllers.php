@@ -1,8 +1,9 @@
 <?php
 
 namespace control;
-use Layout;
-use ViewLogin;
+
+use gui\Layout;
+use gui\ViewLogin;
 
 include_once "service/AnnoncesChecking.php";
 
@@ -31,6 +32,10 @@ class Controllers
 
     public function signupAction($login, $password, $name, $surname, $data, $annoncesCheck)
     {
-        $annoncesCheck->addUser($login, $password, $name, $surname, $data);
+        if ($annoncesCheck->checkUser($login, $password, $name, $surname, $data)) {
+            $data->addUser($login, $password, $name, $surname);
+            return true;
+        }
+        else return false;
     }
 }

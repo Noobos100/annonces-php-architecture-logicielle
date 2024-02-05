@@ -79,15 +79,21 @@ elseif ( '/annonces/index.php/signup' == $uri) {
 
     $vueSignup->display();
 }
-elseif ( '/annonces/index.php/signupsuccess' == $uri
-) {
+elseif ( '/annonces/index.php/signupsuccess' == $uri) {
 
-    $controller->signupAction($_POST['username'], $_POST['password'], $_POST['name'], $_POST['surname'], $data, $annoncesCheck);
+    $result = $controller->signupAction($_POST['username'], $_POST['password'], $_POST['name'], $_POST['surname'], $data, $annoncesCheck);
+    if ($result) {
+        $layout = new Layout("gui/layout.html" );
+        $vueSignupSuccess= new ViewLogin( $layout );
 
-    $layout = new Layout("gui/layout.html" );
-    $vueLogin = new ViewSignupSuccess( $layout );
+        $vueSignupSuccess->display();
+    }
+    else {
+        $layout = new Layout("gui/layout.html" );
+        $vueSignupSuccess= new ViewSignup( $layout );
 
-    $vueLogin->display();
+        $vueSignupSuccess->display();
+    }
 }
 else {
     header('Status: 404 Not Found');

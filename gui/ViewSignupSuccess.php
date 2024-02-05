@@ -8,10 +8,16 @@ class ViewSignupSuccess extends View
     {
         parent::__construct($layout);
 
+        if( $presenter->getAllAnnoncesHTML() == null ){
+            header( "refresh:5;url=/annonces/ViewSignup.php" );
+            echo 'Erreur de login (existe déjà) et/ou de mot de passe (ne contient pas les charactères nécéssaires) -> rechargement de la page d\'inscription dans 5 sec. ...';
+            exit;
+        }
+
         $this->title = 'Exemple Annonces Basic PHP: SignupSuccess';
-        // mot de passe fort (au moins 12 caractères, avec lettres minuscules et majuscules, chiffres et caractères spéciaux)
+
         $this->content = '
-            <p>Signup successfull !</p>
-            <a href="/annonces/index.php">Retour à la page de connexion</a>';
+            <p>Signup successful !</p>
+            <a href="refresh:5;url=/annonces/index.php">Redirection vers la page de connexion dans 5 secondes...</a>';
     }
 }

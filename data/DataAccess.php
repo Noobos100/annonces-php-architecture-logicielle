@@ -68,6 +68,15 @@ class DataAccess implements DataAccessInterface
         return $post;
     }
 
+    public function getLogins($login)
+    {
+        $query = 'SELECT login FROM Users WHERE login="' . $login . '"';
+        $result = $this->dataAccess->query($query);
+        $row = $result->fetch();
+        $result->closeCursor();
+        return $row['username'];
+    }
+
     public function addUser($login, $password, $name, $surname){
         $query = 'INSERT INTO Users (login, password, name, surname) VALUES ("' . $login . '", "' . $password . '", "' . $name . '", "' . $surname . '")';
         $result = $this->dataAccess->query($query);
