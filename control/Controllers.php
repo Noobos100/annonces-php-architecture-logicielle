@@ -35,8 +35,7 @@ class Controllers
         if ($annoncesCheck->checkUser($login, $password, $name, $surname, $data)) {
             $data->addUser($login, $password, $name, $surname);
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
     public function createAction($title, $content, $login, $data, $annoncesCheck): bool
@@ -44,8 +43,7 @@ class Controllers
         if ($annoncesCheck->checkPost($title, $content, $login)) {
             $data->addPost($title, $content, $login);
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
 }

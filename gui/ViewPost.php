@@ -11,5 +11,8 @@ class ViewPost extends View
         $this->title = 'Exemple Annonces Basic PHP: Post';
 
         $this->content = $presenter->getCurrentPostHTML();
+
+        $this->content.= new ViewCreate($layout, $_SESSION['login']);
+
     }
 }

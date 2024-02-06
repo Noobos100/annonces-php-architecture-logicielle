@@ -10,8 +10,8 @@ class ViewCreate extends View
 
         $this->title = 'Exemple Annonces Basic PHP: Create';
         $this->content =
-            '<p>Create a post:</p>
-            <form method="post" action="/annonces/index.php/createsuccess">
+            '<form id="create-form" method="post" action="/annonces/index.php/createsuccess">
+             <p>Create a post:</p>
                 <input type="hidden" id="login" name="login" value="' . $login . '">
                 <label for="title">Title:</label>
                 <input type="text" id="title" name="title" required>
@@ -21,7 +21,9 @@ class ViewCreate extends View
                 <br>
                 <input type="submit" alt="Create a post" value="Create">
             </form>
-            <a href="/annonces/index.php">Back to login</a>';
+            <a href="/annonces/index.php">Back to login</a>
+            <br>
+            <a href="/annonces/index.php/annonces">Back to posts</a>';
     }
 
     public function __toString()

@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 // charge et initialise les bibliothèques globales
 include_once 'data/DataAccess.php';
 
@@ -52,16 +52,35 @@ if ( '/annonces/' == $uri || '/annonces/index.php' == $uri) {
 
     $vueLogin->display();
 }
+
+
+// première connexion (avec le POST)
 elseif ( '/annonces/index.php/annonces' == $uri
     && isset($_POST['login']) && isset($_POST['password']) ){
 
-    $controller->annoncesAction($_POST['login'], $_POST['password'], $data, $annoncesCheck);
+    $_POST['login'] = $_SESSION['login'];
+    $_POST['password'] = $_SESSION['password'];
+
+    $controller->annoncesAction($_SESSION['login'], $_SESSION['password'], $data, $annoncesCheck);
 
     $layout = new Layout("gui/layout.html" );
-    $vueAnnonces= new ViewAnnonces( $layout, $_POST['login'], $presenter);
+    $vueAnnonces= new ViewAnnonces( $layout, $_SESSION['login'], $presenter);
 
     $vueAnnonces->display();
 }
+// pendant la session (avec les variables de session)
+elseif ( '/annonces/index.php/annonces' == $uri
+    && isset($_SESSION['login']) && isset($_SESSION['password'])){
+
+    $controller->annoncesAction($_SESSION['login'], $_SESSION['password'], $data, $annoncesCheck);
+
+    $layout = new Layout("gui/layout.html" );
+    $vueAnnonces= new ViewAnnonces( $layout, $_SESSION['login'], $presenter);
+
+    $vueAnnonces->display();
+}
+
+
 elseif ( '/annonces/index.php/post' == $uri
     && isset($_GET['id'])) {
 
@@ -96,20 +115,22 @@ elseif ( '/annonces/index.php/signupsuccess' == $uri) {
 
 // Si l'utilisateur a réussi à créer une annonce, il est redirigé vers la page des annonces
 elseif ('/annonces/index.php/createsuccess' == $uri) {
-    $result = $controller->createAction($_POST['title'], $_POST['content'], $_POST['login'], $data, $annoncesCheck);
+    $result = $controller->createAction($_POST['title'], $_POST['content'], $_SESSION['login'], $data, $annoncesCheck);
     $layout = new Layout("gui/layout.html");
 
-    $vueAnnonces = new ViewAnnonces($layout, $_POST['login'], $presenter);
+    $vueAnnonces = new ViewAnnonces($layout, $_SESSION['login'], $presenter);
 
     if ($result) {
         $vueAnnonces->display();
-    } else {
-        // Display an error message on the existing ViewAnnonces page
-        $vueAnnonces->displayErrorMessage("Failed to create the post. Please check your input.");
+        header('Location: /annonces/index.php/annonces');
     }
 }
 
 else {
     header('Status: 404 Not Found');
-    echo '<html lang="en"><body><h1> Error 404: Page Not Found</h1></body></html>';
+    echo '<html lang="en">
+            <body>
+                <h1> Error 404: Page Not Found</h1>
+                <button onclick="location.href=\'/annonces/index.php\'">Back to login</button>
+            </body></html>';
 }

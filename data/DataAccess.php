@@ -91,15 +91,27 @@ class DataAccess implements DataAccessInterface
     }
 
     public function addPost($title, $content, $login){
-        $query = 'INSERT INTO Post (title, content, login) VALUES ("' . $title . '", "' . $content . '", "' . $login . '")';
+        $query = 'INSERT INTO Post (title, content, login) VALUES (:title, :content, :login)';
 
         $statement = $this->dataAccess->prepare($query);
+        $statement->bindParam(':title', $title);
+        $statement->bindParam(':content', $content);
+        $statement->bindParam(':login', $login);
+
         if ($statement->execute() === false) {
+            // If execution fails, close the cursor and return false
             $statement->closeCursor();
             return false;
         }
 
-        $result = $this->dataAccess->query($query);
-        $result->closeCursor();
+        // No need to execute the query again, as it's already executed via prepared statement
+        // $result = $this->dataAccess->query($query);
+        // $result->closeCursor();
+
+        // Close the cursor after successful execution
+        $statement->closeCursor();
+
+        // Return true or any other value as per your requirement to indicate successful execution
+        return true;
     }
 }
