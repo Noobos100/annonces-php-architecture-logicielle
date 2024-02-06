@@ -71,24 +71,48 @@ class DataAccess implements DataAccessInterface
     public function getLogins($login)
     {
         $query = 'SELECT login FROM Users WHERE login="' . $login . '"';
+
         $result = $this->dataAccess->query($query);
+
+        if ($result === false) {
+            // Query execution failed
+            return null; // or handle the error in a way that makes sense for your application
+        }
+
         $row = $result->fetch();
         $result->closeCursor();
-        return $row['username'];
+
+        if ($row === false) {
+            // No results found
+            return null; // or handle the absence of results in a way that makes sense for your application
+        }
+
+        return $row['login'];
     }
 
+
     public function addUser($login, $password, $name, $surname){
-        $query = 'INSERT INTO Users (login, password, name, surname) VALUES ("' . $login . '", "' . $password . '", "' . $name . '", "' . $surname . '")';
+        $query = 'INSERT INTO Users (login, password, name, surname) VALUES (:login, :password, :name, :surname)';
 
         $statement = $this->dataAccess->prepare($query);
+        $statement->bindParam(':login', $login);
+        $statement->bindParam(':password', $password);
+        $statement->bindParam(':name', $name);
+        $statement->bindParam(':surname', $surname);
+
         if ($statement->execute() === false) {
+            // If execution fails, close the cursor and return false
             $statement->closeCursor();
             return false;
         }
 
-        $result = $this->dataAccess->query($query);
-        $result->closeCursor();
+        // Close the cursor after successful execution
+        $statement->closeCursor();
+
+        // Return true or any other value as per your requirement to indicate successful execution
+        return true;
     }
+
 
     public function addPost($title, $content, $login){
         $query = 'INSERT INTO Post (title, content, login) VALUES (:title, :content, :login)';
@@ -103,10 +127,6 @@ class DataAccess implements DataAccessInterface
             $statement->closeCursor();
             return false;
         }
-
-        // No need to execute the query again, as it's already executed via prepared statement
-        // $result = $this->dataAccess->query($query);
-        // $result->closeCursor();
 
         // Close the cursor after successful execution
         $statement->closeCursor();
