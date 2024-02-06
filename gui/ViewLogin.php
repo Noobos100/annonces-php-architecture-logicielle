@@ -8,6 +8,8 @@ class ViewLogin extends View
     {
         parent::__construct($layout);
 
+        session_destroy();
+
         $this->title = 'Exemple Annonces Basic PHP: Connexion';
 
         $this->content = '
