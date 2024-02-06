@@ -58,8 +58,8 @@ if ( '/annonces/' == $uri || '/annonces/index.php' == $uri) {
 elseif ( '/annonces/index.php/annonces' == $uri
     && isset($_POST['login']) && isset($_POST['password']) ){
 
-    $_POST['login'] = $_SESSION['login'];
-    $_POST['password'] = $_SESSION['password'];
+    $_SESSION['login'] = $_POST['login'];
+    $_SESSION['password'] = $_POST['password'];
 
     $controller->annoncesAction($_SESSION['login'], $_SESSION['password'], $data, $annoncesCheck);
 
