@@ -18,7 +18,7 @@ class Presenter
             foreach ($this->annoncesCheck->getAnnoncesTxt() as $post) {
                 $content .= ' <li>';
                 $content .= '<a href="/annonces/index.php/post?id=' .
-                    $post['id'] . '">' . $post['title'] . ' ('.$post['date'] .')'. '</a>';
+                    $post['id'] . '">' . htmlspecialchars($post['title']) . ' ('.$post['date'] .')'. '</a>';
                 $content .= ' </li>';
             }
             $content .= '</ul>';
@@ -33,10 +33,10 @@ class Presenter
             $post = $this->annoncesCheck->getAnnoncesTxt()[0];
 
             $content = '<div id="post-container"';
-            $content .= '<h1>' . $post['title'] . '</h1>';
+            $content .= '<h1>' . htmlspecialchars($post['title']) . '</h1>';
             $content .= '<div class="author">' . $post['author'] . '</div>';
             $content .= '<div class="date">' . $post['date'] . '</div>';
-            $content .= '<div class="body">' . $post['body'] . '</div>';
+            $content .= '<div class="body">' . htmlspecialchars($post['body']) . '</div>';
             $content .= '</div>';
         }
         return $content;

@@ -47,10 +47,7 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 // i.e. lance le bon contrôleur en fonction de la requête effectuée
 if ( '/annonces/' == $uri || '/annonces/index.php' == $uri) {
 
-    $layout = new Layout("gui/layout.html" );
-    $vueLogin = new ViewLogin( $layout );
-
-    $vueLogin->display();
+    $controller->loginAction();
 }
 
 
@@ -58,15 +55,20 @@ if ( '/annonces/' == $uri || '/annonces/index.php' == $uri) {
 elseif ( '/annonces/index.php/annonces' == $uri
     && isset($_POST['login']) && isset($_POST['password']) ){
 
-    $_SESSION['login'] = $_POST['login'];
-    $_SESSION['password'] = $_POST['password'];
+    $result = $controller->annoncesAction($_POST['login'], $_POST['password'], $data, $annoncesCheck);
 
-    $controller->annoncesAction($_SESSION['login'], $_SESSION['password'], $data, $annoncesCheck);
+    if ($result) {
+        $_SESSION['login'] = $_POST['login'];
+        $_SESSION['password'] = $_POST['password'];
+        $layout = new Layout("gui/layout.html" );
+        $vueAnnonces= new ViewAnnonces( $layout, $_SESSION['login'], $presenter);
 
-    $layout = new Layout("gui/layout.html" );
-    $vueAnnonces= new ViewAnnonces( $layout, $_SESSION['login'], $presenter);
+        $vueAnnonces->display();
+    }
+    else {
+        $controller->loginAction();
+    }
 
-    $vueAnnonces->display();
 }
 // pendant la session (avec les variables de session)
 elseif ( '/annonces/index.php/annonces' == $uri

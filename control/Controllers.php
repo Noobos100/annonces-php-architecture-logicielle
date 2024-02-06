@@ -17,11 +17,14 @@ class Controllers
         $vueLogin->display();
     }
 
-    public function annoncesAction($login, $password, $data, $annoncesCheck): void
+    public function annoncesAction($login, $password, $data, $annoncesCheck): bool
     {
 
-        if ($annoncesCheck->authenticate($login, $password, $data))
+        if ($annoncesCheck->authenticate($login, $password, $data)) {
             $annoncesCheck->getAllAnnonces($data);
+            return true;
+        }
+        else return false;
 
     }
 

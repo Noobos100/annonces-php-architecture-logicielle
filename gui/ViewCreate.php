@@ -21,7 +21,7 @@ class ViewCreate extends View
                 <br>
                 <input type="submit" alt="Create a post" value="Create">
             </form>
-            <a href="/annonces/index.php">Back to login</a>
+            <a href="/annonces/index.php">Back to login (signout)</a>
             <br>
             <a href="/annonces/index.php/annonces">Back to posts</a>';
     }
