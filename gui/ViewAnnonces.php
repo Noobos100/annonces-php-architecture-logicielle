@@ -22,9 +22,4 @@ class ViewAnnonces extends View
         $this->content.= $presenter->getAllAnnoncesHTML();
     }
 
-    public function displayErrorMessage($message) {
-        // You can customize this to display the error message in the existing content
-        echo '<p style="color: red;">' . $message . '</p>';
-        $this->display();
-    }
 }
