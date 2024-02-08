@@ -84,7 +84,7 @@ elseif ( '/annonces/index.php/annonces' == $uri
 
 
 elseif ( '/annonces/index.php/post' == $uri
-    && isset($_GET['id'])) {
+    && isset($_GET['id']) && isset($_SESSION['login']) && isset($_SESSION['password'])) {
 
     $controller->postAction($_GET['id'], $data, $annoncesCheck);
 
