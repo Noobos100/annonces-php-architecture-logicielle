@@ -29,7 +29,7 @@ class DataAccess implements DataAccessInterface
     {
         $user = null;
 
-        $query = 'SELECT login FROM Users WHERE login="' . $login . '" and password="' . $password . '"';
+        $query = 'SELECT login FROM User WHERE login="' . $login . '" and password="' . $password . '"';
         $result = $this->dataAccess->query($query);
 
         if ($result->rowCount())
@@ -70,7 +70,7 @@ class DataAccess implements DataAccessInterface
 
     public function getLogins($login)
     {
-        $query = 'SELECT login FROM Users WHERE login="' . $login . '"';
+        $query = 'SELECT login FROM User WHERE login="' . $login . '"';
 
         $result = $this->dataAccess->query($query);
 
@@ -92,7 +92,7 @@ class DataAccess implements DataAccessInterface
 
 
     public function addUser($login, $password, $name, $surname){
-        $query = 'INSERT INTO Users (login, password, name, surname) VALUES (:login, :password, :name, :surname)';
+        $query = 'INSERT INTO User (login, password, name, surname) VALUES (:login, :password, :name, :surname)';
 
         $statement = $this->dataAccess->prepare($query);
         $statement->bindParam(':login', $login);
