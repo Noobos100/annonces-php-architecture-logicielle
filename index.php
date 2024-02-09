@@ -14,10 +14,11 @@ include_once 'gui/ViewPost.php';
 include_once 'gui/ViewSignup.php';
 include_once 'gui/Layout.php';
 include_once 'gui/ViewCreate.php';
+include_once 'gui/ViewEdit.php';
 
 use control\{Controllers, Presenter};
 use data\DataAccess;
-use gui\{Layout, ViewAnnonces, ViewLogin, ViewPost, ViewSignup};
+use gui\{Layout, ViewAnnonces, ViewEdit, ViewLogin, ViewPost, ViewSignup};
 use service\AnnoncesChecking;
 
 $data = null;
@@ -82,8 +83,6 @@ elseif ( '/annonces/index.php/annonces' == $uri
 
     $vueAnnonces->display();
 }
-
-
 elseif ( '/annonces/index.php/post' == $uri
     && isset($_GET['id']) && isset($_SESSION['login']) && isset($_SESSION['password'])) {
 
@@ -141,7 +140,28 @@ elseif ( '/annonces/index.php/delete' == $uri
         header('Location: /annonces/index.php/annonces');
     }
 }
+// Je n'arrive pas à récupérer les données du post mais l'ID suffit pour éditer
+// Bien que ce soit une grande faille de sécurité car il suffit d'avoir l'URL
+// et être connecté avec n'import quel compte pour éditer n'importe quelle annonce
+elseif ( '/annonces/index.php/edit' == $uri
+    && isset($_GET['id']) && isset($_SESSION['login']) && isset($_SESSION['password'])) {
 
+    $layout = new Layout("gui/layout.html" );
+    $vueEdit= new ViewEdit( $layout, $presenter);
+    if (isset($_POST['title']) && isset($_POST['body'])) {
+        $result = $controller->editAction($_GET['id'], $data, $annoncesCheck, $_POST['title'], $_POST['body']);
+
+        if ($result) {
+            $vueEdit->display();
+            header('Location: /annonces/index.php/annonces');
+        }
+    }
+    else {
+        $vueEdit->display();
+    }
+}
+
+// 404 Not Found
 else {
     header('Status: 404 Not Found');
     echo '<html lang="en">

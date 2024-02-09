@@ -11,20 +11,37 @@ include_once "domain/Post.php";
 include_once "domain/User.php";
 
 
+/**
+ *
+ */
 class DataAccess implements DataAccessInterface
 {
+    /**
+     * @var null
+     */
     protected $dataAccess = null;
 
+    /**
+     * @param $dataAccess
+     */
     public function __construct($dataAccess)
     {
         $this->dataAccess = $dataAccess;
     }
 
+    /**
+     *
+     */
     public function __destruct()
     {
         $this->dataAccess = null;
     }
 
+    /**
+     * @param $login
+     * @param $password
+     * @return User|null
+     */
     public function getUser($login, $password)
     {
         $user = null;
@@ -40,6 +57,9 @@ class DataAccess implements DataAccessInterface
         return $user;
     }
 
+    /**
+     * @return array
+     */
     public function getAllAnnonces()
     {
         $result = $this->dataAccess->query('SELECT * FROM Post ORDER BY date DESC');
@@ -55,6 +75,10 @@ class DataAccess implements DataAccessInterface
         return $annonces;
     }
 
+    /**
+     * @param $id
+     * @return Post
+     */
     public function getPost($id)
     {
         $id = intval($id);
@@ -68,6 +92,10 @@ class DataAccess implements DataAccessInterface
         return $post;
     }
 
+    /**
+     * @param $login
+     * @return null
+     */
     public function getLogins($login)
     {
         $query = 'SELECT login FROM User WHERE login="' . $login . '"';
@@ -91,6 +119,13 @@ class DataAccess implements DataAccessInterface
     }
 
 
+    /**
+     * @param $login
+     * @param $password
+     * @param $name
+     * @param $surname
+     * @return bool
+     */
     public function addUser($login, $password, $name, $surname){
         $query = 'INSERT INTO User (login, password, name, surname) VALUES (:login, :password, :name, :surname)';
 
@@ -114,6 +149,12 @@ class DataAccess implements DataAccessInterface
     }
 
 
+    /**
+     * @param $title
+     * @param $content
+     * @param $login
+     * @return bool
+     */
     public function addPost($title, $content, $login){
         $query = 'INSERT INTO Post (title, content, login) VALUES (:title, :content, :login)';
 
@@ -135,6 +176,12 @@ class DataAccess implements DataAccessInterface
         return true;
     }
 
+    /**
+     * @param $id
+     * @param $title
+     * @param $content
+     * @return bool
+     */
     public function editPost($id, $title, $content){
         $query = 'UPDATE Post SET title=:title, content=:content WHERE id=:id';
 
@@ -156,6 +203,10 @@ class DataAccess implements DataAccessInterface
         return true;
     }
 
+    /**
+     * @param $id
+     * @return bool
+     */
     public function deletePost($id){
         $query = 'DELETE FROM Post WHERE id=:id';
 

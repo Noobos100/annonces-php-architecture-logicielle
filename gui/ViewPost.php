@@ -2,8 +2,15 @@
 namespace gui;
 include_once "View.php";
 
+/**
+ *
+ */
 class ViewPost extends View
 {
+    /**
+     * @param $layout
+     * @param $presenter
+     */
     public function __construct($layout, $presenter)
     {
         parent::__construct($layout);
