@@ -12,6 +12,11 @@ class AnnoncesChecking
         return $this->annoncesTxt;
     }
 
+    public function getCommentairesTxt()
+    {
+        return $this->commentairesTxt;
+    }
+
     public function authenticate($login, $password, $data)
     {
         return ($data->getUser($login, $password) != null);
@@ -39,7 +44,11 @@ class AnnoncesChecking
         $comments = $data->getCommentsFromPostID($id);
 
         foreach ($comments as $comment) {
-            $this->commentairesTxt[] = array('comment_id' => $comment->getId(), 'comment_text' => $comment->getText(),'comment_author' => $comment->getAuthor(), 'post_id' => $comment->getPostId());
+            $this->commentairesTxt[] = array(
+                'comment_id' => $comment->getId(),
+                'comment_text' => $comment->getText(),
+                'comment_author' => $comment->getAuthor(),
+                'post_id' => $comment->getPostId());
         }
     }
 

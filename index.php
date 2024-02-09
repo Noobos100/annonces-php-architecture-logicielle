@@ -68,6 +68,7 @@ elseif ( '/annonces/index.php/annonces' == $uri
     }
     else {
         $controller->loginAction();
+        header('Location: /annonces/index.php');
     }
 
 }

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
     <data-source source="LOCAL" name="cdaw_annonces_db@mysql-cdaw.alwaysdata.net" uuid="28162d22-a118-4f62-88cd-eac91073e6c6">
-      <driver-ref>mysql_aurora</driver-ref>
+      <driver-ref>mariadb</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mariadb://mysql-cdaw.alwaysdata.net:3306/cdaw_annonces_db</jdbc-url>

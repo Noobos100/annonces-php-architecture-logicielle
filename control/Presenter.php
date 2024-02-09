@@ -45,15 +45,14 @@ class Presenter
     public function getCommentsHTML()
     {
         $content = '<ul>';
-        if ($this->annoncesCheck->getComments() != null) {
-            foreach ($this->annoncesCheck->getComments() as $comment) {
-                $content .= '<div class="comment">';
+        if ($this->annoncesCheck->getCommentairesTxt() != null) {
+            foreach ($this->annoncesCheck->getCommentairesTxt() as $comment) {
+                $content .= '<li>';
                 $content .= '<div class="author">' . $comment['comment_author'] . '</div>';
-                $content .= '<div class="body">' . htmlspecialchars($comment['comment_text']) . '</div>';
-                $content .= '</div>';
+                $content .= '<div class="comment">' . htmlspecialchars($comment['comment_text']) . '</div>';
+                $content .= '</li>';
             }
-            $content .= '</div>';
         }
-        return $content;
+        return $content . '</ul>';
     }
 }
