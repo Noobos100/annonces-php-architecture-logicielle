@@ -3,7 +3,7 @@ Les identifiants de la bdd:
 - password: vraimdp
 
 Les identifiants Alwaydata:
-- user: charles.daw+1@etu.unvi-amu.fr
+- user: charles.daw+1@etu.univ-amu.fr
 - password: vraimdp
 
 URL du site:
