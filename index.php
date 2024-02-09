@@ -131,7 +131,17 @@ elseif ('/annonces/index.php/createsuccess' == $uri) {
         header('Location: /annonces/index.php/annonces');
     }
 }
+elseif ('/annonces/index.php/createcomment' == $uri) {
+    $result = $controller->createCommentAction($_POST['id'], $_POST['login'], $_POST['content'], $data, $annoncesCheck);
+    $layout = new Layout("gui/layout.html");
 
+    $vuePost = new ViewPost($layout, $presenter);
+
+    if ($result) {
+        $vuePost->display();
+        header('Location: /annonces/index.php/post?id='.$_POST['id']);
+    }
+}
 else {
     header('Status: 404 Not Found');
     echo '<html lang="en">

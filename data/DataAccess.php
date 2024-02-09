@@ -152,12 +152,12 @@ class DataAccess implements DataAccessInterface
 
     public function addComment($text, $login, $id)
     {
-        $query = 'INSERT INTO Comment (comment_text, comment_author, post_id) VALUES (:content, :login, :id)';
+        $query = 'INSERT INTO Comment (post_id, comment_author, comment_text) VALUES (:id, :login, :content)';
 
         $statement = $this->dataAccess->prepare($query);
-        $statement->bindParam(':content', $text);
-        $statement->bindParam(':login', $login);
         $statement->bindParam(':id', $id);
+        $statement->bindParam(':login', $login);
+        $statement->bindParam(':content', $text);
 
         if ($statement->execute() === false) {
             // If execution fails, close the cursor and return false
@@ -204,15 +204,12 @@ class DataAccess implements DataAccessInterface
         $statement->bindParam(':login', $login);
 
         if ($statement->execute() === false) {
-            // If execution fails, close the cursor and return false
             $statement->closeCursor();
             return false;
         }
 
-        // Close the cursor after successful execution
         $statement->closeCursor();
 
-        // Return true or any other value as per your requirement to indicate successful execution
         return true;
     }
 }

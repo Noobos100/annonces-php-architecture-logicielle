@@ -54,4 +54,12 @@ class Controllers
         $annoncesCheck->getComments($id, $data);
     }
 
+    public function createCommentAction($id, $login, $content, $data, $annoncesCheck)
+    {
+        if ($annoncesCheck->checkComment($id, $login, $content)) {
+            $data->addComment($id, $login, $content);
+            return true;
+        } else return false;
+    }
+
 }

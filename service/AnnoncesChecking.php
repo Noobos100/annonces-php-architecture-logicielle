@@ -68,7 +68,7 @@ class AnnoncesChecking
 
     public function checkComment($text, $login)
     {
-        // vérifie que le texte n'est pas vide, que l'utilisateur est bien login
-        return (!empty($text) && !empty($login));
+        // vérifie que le texte n'est pas vide, que l'utilisateur est bien login, et que le texte du commentaure ne dépasse pas 200 caractères
+        return (!empty($text) && !empty($login) && strlen($text) <= 200);
     }
 }
