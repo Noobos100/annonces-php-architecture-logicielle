@@ -2,3 +2,5 @@ Les identifiants de connexion à la base de données peuvent être trouvés dans
 
 J'ai utilisé l'ordinateur de Lorys pour les derniers commits, n'ayant pas d'ordi portable pour l'instant.
 Et aussi celui de Valentin.
+
+Cette version comporte les commentaires qui se sont avérés êtres inutiles xD
