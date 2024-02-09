@@ -46,7 +46,7 @@ class DataAccess implements DataAccessInterface
         $annonces = array();
 
         while ($row = $result->fetch()) {
-            $currentPost = new Post($row['id'], $row['title'], $row['content'], $row['date']);
+            $currentPost = new Post($row['id'], $row['title'], $row['content'], $row['date'], $row['login']);
             $annonces[] = $currentPost;
         }
 
@@ -61,7 +61,7 @@ class DataAccess implements DataAccessInterface
         $result = $this->dataAccess->query('SELECT * FROM Post WHERE id=' . $id);
         $row = $result->fetch();
 
-        $post = new Post($row['id'], $row['title'], $row['content'], $row['date']);
+        $post = new Post($row['id'], $row['title'], $row['content'], $row['date'], $row['login']);
 
         $result->closeCursor();
 
@@ -121,6 +121,46 @@ class DataAccess implements DataAccessInterface
         $statement->bindParam(':title', $title);
         $statement->bindParam(':content', $content);
         $statement->bindParam(':login', $login);
+
+        if ($statement->execute() === false) {
+            // If execution fails, close the cursor and return false
+            $statement->closeCursor();
+            return false;
+        }
+
+        // Close the cursor after successful execution
+        $statement->closeCursor();
+
+        // Return true or any other value as per your requirement to indicate successful execution
+        return true;
+    }
+
+    public function editPost($id, $title, $content){
+        $query = 'UPDATE Post SET title=:title, content=:content WHERE id=:id';
+
+        $statement = $this->dataAccess->prepare($query);
+        $statement->bindParam(':id', $id);
+        $statement->bindParam(':title', $title);
+        $statement->bindParam(':content', $content);
+
+        if ($statement->execute() === false) {
+            // If execution fails, close the cursor and return false
+            $statement->closeCursor();
+            return false;
+        }
+
+        // Close the cursor after successful execution
+        $statement->closeCursor();
+
+        // Return true or any other value as per your requirement to indicate successful execution
+        return true;
+    }
+
+    public function deletePost($id){
+        $query = 'DELETE FROM Post WHERE id=:id';
+
+        $statement = $this->dataAccess->prepare($query);
+        $statement->bindParam(':id', $id);
 
         if ($statement->execute() === false) {
             // If execution fails, close the cursor and return false

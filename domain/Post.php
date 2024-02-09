@@ -9,12 +9,13 @@ class Post
     protected $date;
     protected $author;
 
-    public function __construct($id, $title, $body, $date)
+    public function __construct($id, $title, $body, $date, $author)
     {
         $this->id = $id;
         $this->title = $title;
         $this->date = $date;
         $this->body = $body;
+        $this->author = $author;
     }
 
     public function getId()

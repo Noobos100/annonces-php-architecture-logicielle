@@ -6,6 +6,7 @@ class User
     protected $login;
     protected $password;
 
+    protected $admin;
     protected $name;
     protected $surname;
 
@@ -19,4 +20,25 @@ class User
     {
         return $this->login;
     }
+
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getSurname()
+    {
+        return $this->surname;
+    }
+
+    public function getAdmin()
+    {
+        return $this->admin;
+    }
+
 }

@@ -45,4 +45,16 @@ class AnnoncesChecking
         // vérifie que le titre et le corps ne sont pas vides, que l'utilisateur est bien login
         return (!empty($title) && !empty($body) && !empty($login));
     }
+
+    public function checkEdit($id, $data)
+    {
+        // vérifie que le post existe
+        return ($data->getPost($id) != null);
+    }
+
+    public function checkDelete($id, $data)
+    {
+        // vérifie que le post existe
+        return ($data->getPost($id) != null);
+    }
 }

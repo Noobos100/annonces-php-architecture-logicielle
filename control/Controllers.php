@@ -23,8 +23,7 @@ class Controllers
         if ($annoncesCheck->authenticate($login, $password, $data)) {
             $annoncesCheck->getAllAnnonces($data);
             return true;
-        }
-        else return false;
+        } else return false;
 
     }
 
@@ -49,4 +48,19 @@ class Controllers
         } else return false;
     }
 
+    public function editAction($id, $data, $annoncesCheck, $title, $content): bool
+    {
+        if ($annoncesCheck->checkEdit($id, $data)) {
+            $data->editPost($id, $title, $content);
+            return true;
+        } else return false;
+    }
+
+    public function deleteAction($id, $data, $annoncesCheck): bool
+    {
+        if ($annoncesCheck->checkDelete($id, $data)) {
+            $data->deletePost($id);
+            return true;
+        } else return false;
+    }
 }

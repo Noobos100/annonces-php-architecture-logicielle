@@ -128,6 +128,19 @@ elseif ('/annonces/index.php/createsuccess' == $uri) {
         header('Location: /annonces/index.php/annonces');
     }
 }
+elseif ( '/annonces/index.php/delete' == $uri
+    && isset($_GET['id']) && isset($_SESSION['login']) && isset($_SESSION['password'])) {
+
+    $result = $controller->deleteAction($_GET['id'], $data, $annoncesCheck);
+
+    $layout = new Layout("gui/layout.html" );
+    $vueAnnonces= new ViewAnnonces( $layout, $_SESSION['login'], $presenter);
+
+    if ($result) {
+        $vueAnnonces->display();
+        header('Location: /annonces/index.php/annonces');
+    }
+}
 
 else {
     header('Status: 404 Not Found');
