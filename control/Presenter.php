@@ -18,7 +18,7 @@ class Presenter
             foreach ($this->annoncesCheck->getAnnoncesTxt() as $post) {
                 $content .= ' <li>';
                 $content .= '<a href="/annonces/index.php/post?id=' .
-                    $post['id'] . '">' . htmlspecialchars($post['title']) . ' ('.$post['date'] .')'. '</a>';
+                    $post['id'] . '">' . htmlspecialchars($post['title']) . ' (' . $post['date'] . ')' . '</a>';
                 $content .= ' </li>';
             }
             $content .= '</ul>';
@@ -37,6 +37,21 @@ class Presenter
             $content .= '<div class="author">' . $post['author'] . '</div>';
             $content .= '<div class="date">' . $post['date'] . '</div>';
             $content .= '<div class="body">' . htmlspecialchars($post['body']) . '</div>';
+            $content .= '</div>';
+        }
+        return $content;
+    }
+
+    public function getCommentsHTML()
+    {
+        $content = '<ul>';
+        if ($this->annoncesCheck->getComments() != null) {
+            foreach ($this->annoncesCheck->getComments() as $comment) {
+                $content .= '<div class="comment">';
+                $content .= '<div class="author">' . $comment['comment_author'] . '</div>';
+                $content .= '<div class="body">' . htmlspecialchars($comment['comment_text']) . '</div>';
+                $content .= '</div>';
+            }
             $content .= '</div>';
         }
         return $content;

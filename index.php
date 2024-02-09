@@ -14,6 +14,7 @@ include_once 'gui/ViewPost.php';
 include_once 'gui/ViewSignup.php';
 include_once 'gui/Layout.php';
 include_once 'gui/ViewCreate.php';
+include_once 'gui/ViewComment.php';
 
 use control\{Controllers, Presenter};
 use data\DataAccess;
@@ -87,6 +88,8 @@ elseif ( '/annonces/index.php/post' == $uri
     && isset($_GET['id']) && isset($_SESSION['login']) && isset($_SESSION['password'])) {
 
     $controller->postAction($_GET['id'], $data, $annoncesCheck);
+
+    $controller->commentAction($_GET['id'], $data, $annoncesCheck);
 
     $layout = new Layout("gui/layout.html" );
     $vuePost= new ViewPost( $layout, $presenter );

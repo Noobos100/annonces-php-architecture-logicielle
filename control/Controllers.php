@@ -49,4 +49,9 @@ class Controllers
         } else return false;
     }
 
+    public function commentAction($id, $data, $annoncesCheck): void
+    {
+        $annoncesCheck->getComments($id, $data);
+    }
+
 }

@@ -12,7 +12,11 @@ class ViewPost extends View
 
         $this->content = $presenter->getCurrentPostHTML();
 
+        $this->content.= new ViewComment($layout, $_SESSION['login']);
+
         $this->content.= new ViewCreate($layout, $_SESSION['login']);
+
+        $this->content.= $presenter->getCommentsHTML($_GET['id']);
 
     }
 }

@@ -2,13 +2,14 @@
 
 namespace data;
 
-use domain\{Post, User};
+use domain\{Comment, Post, User};
 use service\DataAccessInterface;
 
 include_once "service/DataAccessInterface.php";
 
 include_once "domain/Post.php";
 include_once "domain/User.php";
+include_once "domain/Comment.php";
 
 
 class DataAccess implements DataAccessInterface
@@ -29,7 +30,7 @@ class DataAccess implements DataAccessInterface
     {
         $user = null;
 
-        $query = 'SELECT login FROM Users WHERE login="' . $login . '" and password="' . $password . '"';
+        $query = 'SELECT login FROM User WHERE login="' . $login . '" and password="' . $password . '"';
         $result = $this->dataAccess->query($query);
 
         if ($result->rowCount())
@@ -68,15 +69,74 @@ class DataAccess implements DataAccessInterface
         return $post;
     }
 
+    public function getCommentsFromPostID($id)
+    {
+        $query = ('SELECT * FROM Comment WHERE post_id= :id');
+
+        $statement = $this->dataAccess->prepare($query);
+        $statement->bindParam(':id', $id);
+        $statement->execute();
+
+        $comments = array();
+
+        while ($row = $statement->fetch()) {
+            $currentComment = new Comment($row['comment_id'], $row['comment_author'], $row['comment_text'], $row['post_id']);
+            $comments[] = $currentComment;
+        }
+
+        $statement->closeCursor();
+
+        return $comments;
+    }
+
+    public function getCommentsFromLogin($login)
+    {
+        $query = ('SELECT * FROM Comment WHERE comment_author=:login');
+
+        $statement = $this->dataAccess->prepare($query);
+        $statement->bindParam(':login', $login);
+        $statement->execute();
+
+        $comments = array();
+
+        while ($row = $statement->fetch()) {
+            $currentComment = new Comment($row['comment_id'], $row['comment_author'], $row['comment_text'], $row['post_id']);
+            $comments[] = $currentComment;
+        }
+
+        $statement->closeCursor();
+
+        return $comments;
+    }
+
+    public function getReceivedComments($login)
+    {
+        $query = ('SELECT * FROM Comment WHERE post_id IN (SELECT id FROM Post WHERE login="' . $login . '")');
+
+            $statement = $this->dataAccess->prepare($query);
+            $statement->bindParam(':login', $login);
+            $statement->execute();
+
+            $comments = array();
+
+            while ($row = $statement->fetch()) {
+                $currentComment = new Comment($row['comment_id'], $row['comment_author'], $row['comment_text'], $row['post_id']);
+                $comments[] = $currentComment;
+            }
+
+            $statement->closeCursor();
+
+            return $comments;
+        }
+
     public function getLogins($login)
     {
-        $query = 'SELECT login FROM Users WHERE login="' . $login . '"';
+        $query = 'SELECT login FROM User WHERE login="' . $login . '"';
 
         $result = $this->dataAccess->query($query);
 
         if ($result === false) {
-            // Query execution failed
-            return null; // or handle the error in a way that makes sense for your application
+            return null;
         }
 
         $row = $result->fetch();
@@ -84,15 +144,36 @@ class DataAccess implements DataAccessInterface
 
         if ($row === false) {
             // No results found
-            return null; // or handle the absence of results in a way that makes sense for your application
+            return null;
         }
 
         return $row['login'];
     }
 
+    public function addComment($text, $login, $id)
+    {
+        $query = 'INSERT INTO Comment (comment_text, comment_author, post_id) VALUES (:content, :login, :id)';
+
+        $statement = $this->dataAccess->prepare($query);
+        $statement->bindParam(':content', $text);
+        $statement->bindParam(':login', $login);
+        $statement->bindParam(':id', $id);
+
+        if ($statement->execute() === false) {
+            // If execution fails, close the cursor and return false
+            $statement->closeCursor();
+            return false;
+        }
+
+        // Close the cursor after successful execution
+        $statement->closeCursor();
+
+        // Return true or any other value as per your requirement to indicate successful execution
+        return true;
+    }
 
     public function addUser($login, $password, $name, $surname){
-        $query = 'INSERT INTO Users (login, password, name, surname) VALUES (:login, :password, :name, :surname)';
+        $query = 'INSERT INTO User (login, password, name, surname) VALUES (:login, :password, :name, :surname)';
 
         $statement = $this->dataAccess->prepare($query);
         $statement->bindParam(':login', $login);

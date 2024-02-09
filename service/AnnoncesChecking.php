@@ -5,6 +5,8 @@ class AnnoncesChecking
 {
     protected $annoncesTxt;
 
+    protected $commentairesTxt;
+
     public function getAnnoncesTxt()
     {
         return $this->annoncesTxt;
@@ -32,6 +34,15 @@ class AnnoncesChecking
         $this->annoncesTxt[] = array('id' => $post->getId(), 'title' => $post->getTitle(), 'body' => $post->getBody(), 'date' => $post->getDate(), 'author' => $post->getAuthor());
     }
 
+    public function getComments($id, $data)
+    {
+        $comments = $data->getCommentsFromPostID($id);
+
+        foreach ($comments as $comment) {
+            $this->commentairesTxt[] = array('comment_id' => $comment->getId(), 'comment_text' => $comment->getText(),'comment_author' => $comment->getAuthor(), 'post_id' => $comment->getPostId());
+        }
+    }
+
     public function checkUser($login, $password, $name, $surname, $data)
     {
         // vérifie que login n'existe pas deja avec getLogin + mot de passe fort
@@ -44,5 +55,11 @@ class AnnoncesChecking
     {
         // vérifie que le titre et le corps ne sont pas vides, que l'utilisateur est bien login
         return (!empty($title) && !empty($body) && !empty($login));
+    }
+
+    public function checkComment($text, $login)
+    {
+        // vérifie que le texte n'est pas vide, que l'utilisateur est bien login
+        return (!empty($text) && !empty($login));
     }
 }
