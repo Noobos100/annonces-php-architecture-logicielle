@@ -1,20 +1,13 @@
 <?php
 namespace gui;
+
 include_once "View.php";
 
-/**
- *
- */
 class ViewLogin extends View
 {
-    /**
-     * @param $layout
-     */
     public function __construct($layout)
     {
         parent::__construct($layout);
-
-        session_destroy();
 
         $this->title = 'Exemple Annonces Basic PHP: Connexion';
 
@@ -27,7 +20,6 @@ class ViewLogin extends View
                 <input type="password" name="password" id="password" maxlength="12" required />
         
                 <input type="submit" value="Envoyer">
-            </form>
-        <a href="/annonces/index.php/signup">Pas encore inscrit ?</a>';
+            </form>';
     }
 }

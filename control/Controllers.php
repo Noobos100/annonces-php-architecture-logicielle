@@ -1,124 +1,45 @@
 <?php
-
 namespace control;
 
-use gui\Layout;
-use gui\ViewLogin;
-
-include_once "service/AnnoncesChecking.php";
-
-/**
- * Class Controllers
- * @package control
- * Cette classe permet de gérer les actions de l'utilisateur
- */
 class Controllers
 {
-    /**
-     * @return void
-     * Cette méthode permet d'afficher la page de connexion
-     */
-    public function loginAction(): void
-    {
-        $layout = new Layout("gui/layout.html");
-        $vueLogin = new ViewLogin($layout);
 
-        $vueLogin->display();
+    public function  authenticateAction($userCheck, $dataUsers){
+
+        // Si l'utilisateur n'a pas de session ouverte
+        if( !isset($_SESSION['login']) ) {
+
+            // Si la page d'origine est le formulaire de connexion ou de création de compte
+            if( isset($_POST['login']) && isset($_POST['password']) )
+            {
+                if( !$userCheck->authenticate($_POST['login'], $_POST['password'], $dataUsers) )
+                {
+                    // retourne une erreur si le compte n'est pas enregistré
+                    $error = 'bad login or pwd';
+                    return $error;
+
+                }
+                // Enregistrement des informations de session après une authentification réussie
+                else {
+                    $_SESSION['login'] = $_POST['login'] ;
+                }
+            }
+            else{
+                // retourne une erreur si la personne ne passe pas par le forumlaire de création ou de connexion
+                $error = 'not connected';
+                return $error;
+            }
+
+        }
     }
 
-    /**
-     * @param $login
-     * @param $password
-     * @param $data
-     * @param $annoncesCheck
-     * @return bool
-     */
-    public function annoncesAction($login, $password, $data, $annoncesCheck): bool
+    public function annoncesAction( $data, $annoncesCheck)
     {
-
-        if ($annoncesCheck->authenticate($login, $password, $data)) {
-            $annoncesCheck->getAllAnnonces($data);
-            return true;
-        } else return false;
-
+        $annoncesCheck->getAllAnnonces($data);
     }
 
-    /**
-     * @param $id
-     * @param $data
-     * @param $annoncesCheck
-     * @return void
-     */
-    public function postAction($id, $data, $annoncesCheck): void
+    public function postAction($id, $data, $annoncesCheck)
     {
         $annoncesCheck->getPost($id, $data);
-    }
-
-    /**
-     * @param $login
-     * @param $password
-     * @param $name
-     * @param $surname
-     * @param $data
-     * @param $annoncesCheck
-     * @return bool
-     */
-    public function signupAction($login, $password, $name, $surname, $data, $annoncesCheck): bool
-    {
-        if ($annoncesCheck->checkUser($login, $password, $name, $surname, $data)) {
-            $data->addUser($login, $password, $name, $surname);
-            return true;
-        } else return false;
-    }
-
-    /**
-     * @param $title
-     * @param $content
-     * @param $login
-     * @param $data
-     * @param $annoncesCheck
-     * @return bool
-     * Cette méthode permet de créer un post
-     * Elle vérifie si le titre et le contenu ne sont pas vides
-     */
-    public function createAction($title, $content, $login, $data, $annoncesCheck): bool
-    {
-        if ($annoncesCheck->checkPost($title, $content, $login)) {
-            $data->addPost($title, $content, $login);
-            return true;
-        } else return false;
-    }
-
-    /**
-     * @param $id
-     * @param $data
-     * @param $annoncesCheck
-     * @param $title
-     * @param $content
-     * @return bool
-     * Cette méthode permet de modifier un post
-     */
-    public function editAction($id, $data, $annoncesCheck, $title, $content): bool
-    {
-        if ($annoncesCheck->checkEdit($id, $data)) {
-            $data->editPost($id, $title, $content);
-            return true;
-        } else return false;
-    }
-
-    /**
-     * @param $id
-     * @param $data
-     * @param $annoncesCheck
-     * @return bool
-     * Cette méthode permet de supprimer un post
-     * Elle vérifie si l'utilisateur est bien l'auteur du post
-     */
-    public function deleteAction($id, $data, $annoncesCheck): bool
-    {
-        if ($annoncesCheck->checkDelete($id, $data)) {
-            $data->deletePost($id);
-            return true;
-        } else return false;
     }
 }

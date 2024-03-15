@@ -1,30 +1,34 @@
 <?php
-session_start();
+
 // charge et initialise les bibliothèques globales
-include_once 'data/DataAccess.php';
+include_once 'data/AnnonceSqlAccess.php';
+include_once 'data/UserSqlAccess.php';
+include_once 'data/ApiAlternance.php';
 
 include_once 'control/Controllers.php';
 include_once 'control/Presenter.php';
 
 include_once 'service/AnnoncesChecking.php';
+include_once 'service/UserChecking.php';
 
+include_once 'gui/Layout.php';
 include_once 'gui/ViewLogin.php';
 include_once 'gui/ViewAnnonces.php';
 include_once 'gui/ViewPost.php';
-include_once 'gui/ViewSignup.php';
-include_once 'gui/Layout.php';
+include_once 'gui/ViewError.php';
 include_once 'gui/ViewCreate.php';
-include_once 'gui/ViewEdit.php';
 
+use gui\{ViewLogin, ViewAnnonces, ViewPost, ViewError, Layout};
 use control\{Controllers, Presenter};
-use data\DataAccess;
-use gui\{Layout, ViewAnnonces, ViewEdit, ViewLogin, ViewPost, ViewSignup};
-use service\AnnoncesChecking;
+use data\{AnnonceSqlAccess, ApiAlternance, UserSqlAccess};
+use service\{AnnoncesChecking, UserChecking};
 
 $data = null;
 try {
+    $bd = new PDO('mysql:host=mysql-cdaw.alwaysdata.net;dbname=cdaw_annonces_db', 'cdaw_annonces', 'vraimdp');
     // construction du modèle
-    $data = new DataAccess( new PDO('mysql:host=mysql-cdaw.alwaysdata.net;dbname=cdaw_annonces_db', 'cdaw_annonces', 'vraimdp') );
+    $dataAnnonces = new AnnonceSqlAccess($bd);
+    $dataUsers = new UserSqlAccess($bd);
 
 } catch (PDOException $e) {
     print "Erreur de connexion !: " . $e->getMessage() . "<br/>";
@@ -34,8 +38,11 @@ try {
 // initialisation du controller
 $controller = new Controllers();
 
-// intialisation du cas d'utilisation AnnoncesChecking
+// intialisation du cas d'utilisation service\AnnoncesChecking
 $annoncesCheck = new AnnoncesChecking() ;
+
+// intialisation du cas d'utilisation service\UserChecking
+$userCheck = new UserChecking() ;
 
 // intialisation du presenter avec accès aux données de AnnoncesCheking
 $presenter = new Presenter($annoncesCheck);
@@ -44,129 +51,70 @@ $presenter = new Presenter($annoncesCheck);
 // (p.ex. /annonces/index.php)
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
+$apialternance = new ApiAlternance();
+var_dump($apialternance->getAllAnnonces());
+
+// définition d'une session d'une heure
+ini_set('session.gc_maxlifetime', 3600);
+session_set_cookie_params(3600);
+session_start();
+
+// Authentification et création du compte (sauf pour le formulaire de connexion et la route de déconnexion)
+if ( '/annonces/' != $uri and '/annonces/index.php' != $uri and '/annonces/index.php/logout' != $uri ){
+
+    $error = $controller->authenticateAction($userCheck, $dataUsers);
+
+    if( $error != null )
+    {
+        $uri='/annonces/index.php/error' ;
+        if( $error == 'bad login or pwd' or $error == 'not connected')
+            $redirect = '/annonces/index.php';
+    }
+}
+
 // route la requête en interne
 // i.e. lance le bon contrôleur en fonction de la requête effectuée
-if ( '/annonces/' == $uri || '/annonces/index.php' == $uri) {
+if ( '/annonces/' == $uri || '/annonces/index.php' == $uri || '/annonces/index.php/logout' == $uri) {
+    // affichage de la page de connexion
 
-    $controller->loginAction();
+    session_destroy();
+    $layout = new Layout("gui/layout.html" );
+    $vueLogin = new ViewLogin( $layout );
+
+    $vueLogin->display();
 }
+elseif ( '/annonces/index.php/annonces' == $uri ){
+    // affichage de toutes les annonces
 
-
-// première connexion (avec le POST)
-elseif ( '/annonces/index.php/annonces' == $uri
-    && isset($_POST['login']) && isset($_POST['password']) ){
-
-    $result = $controller->annoncesAction($_POST['login'], $_POST['password'], $data, $annoncesCheck);
-
-    if ($result) {
-        $_SESSION['login'] = $_POST['login'];
-        $_SESSION['password'] = $_POST['password'];
-        $layout = new Layout("gui/layout.html" );
-        $vueAnnonces= new ViewAnnonces( $layout, $_SESSION['login'], $presenter);
-
-        $vueAnnonces->display();
-    }
-    else {
-        $controller->loginAction();
-        header('Location: /annonces/index.php');
-    }
-
-}
-// pendant la session (avec les variables de session)
-elseif ( '/annonces/index.php/annonces' == $uri
-    && isset($_SESSION['login']) && isset($_SESSION['password'])){
-
-    $controller->annoncesAction($_SESSION['login'], $_SESSION['password'], $data, $annoncesCheck);
+    $controller->annoncesAction($dataAnnonces, $annoncesCheck);
 
     $layout = new Layout("gui/layout.html" );
-    $vueAnnonces= new ViewAnnonces( $layout, $_SESSION['login'], $presenter);
+    $vueAnnonces= new ViewAnnonces( $layout,  $_SESSION['login'], $presenter);
 
     $vueAnnonces->display();
 }
 elseif ( '/annonces/index.php/post' == $uri
-    && isset($_GET['id']) && isset($_SESSION['login']) && isset($_SESSION['password'])) {
+    && isset($_GET['id'])) {
+    // Affichage d'une annonce
 
-    $controller->postAction($_GET['id'], $data, $annoncesCheck);
+    $controller->postAction($_GET['id'], $dataAnnonces, $annoncesCheck);
 
     $layout = new Layout("gui/layout.html" );
-    $vuePost= new ViewPost( $layout, $presenter );
+    $vuePost= new ViewPost( $layout,  $_SESSION['login'], $presenter );
 
     $vuePost->display();
 }
-elseif ( '/annonces/index.php/signup' == $uri) {
+elseif ( '/annonces/index.php/error' == $uri ){
+    // Affichage d'un message d'erreur
 
     $layout = new Layout("gui/layout.html" );
-    $vueSignup= new ViewSignup( $layout );
+    $vueError = new ViewError( $layout, $error, $redirect );
 
-    $vueSignup->display();
+    $vueError->display();
 }
-elseif ( '/annonces/index.php/signupsuccess' == $uri) {
-
-    $result = $controller->signupAction($_POST['username'], $_POST['password'], $_POST['name'], $_POST['surname'], $data, $annoncesCheck);
-    $layout = new Layout("gui/layout.html" );
-    if ($result) {
-        $vueSignupSuccess= new ViewLogin( $layout );
-
-    }
-    else {
-        $vueSignupSuccess= new ViewSignup( $layout );
-
-    }
-    $vueSignupSuccess->display();
-}
-
-// Si l'utilisateur a réussi à créer une annonce, il est redirigé vers la page des annonces
-elseif ('/annonces/index.php/createsuccess' == $uri) {
-    $result = $controller->createAction($_POST['title'], $_POST['content'], $_SESSION['login'], $data, $annoncesCheck);
-    $layout = new Layout("gui/layout.html");
-
-    $vueAnnonces = new ViewAnnonces($layout, $_SESSION['login'], $presenter);
-
-    if ($result) {
-        $vueAnnonces->display();
-        header('Location: /annonces/index.php/annonces');
-    }
-}
-elseif ( '/annonces/index.php/delete' == $uri
-    && isset($_GET['id']) && isset($_SESSION['login']) && isset($_SESSION['password'])) {
-
-    $result = $controller->deleteAction($_GET['id'], $data, $annoncesCheck);
-
-    $layout = new Layout("gui/layout.html" );
-    $vueAnnonces= new ViewAnnonces( $layout, $_SESSION['login'], $presenter);
-
-    if ($result) {
-        $vueAnnonces->display();
-        header('Location: /annonces/index.php/annonces');
-    }
-}
-// Je n'arrive pas à récupérer les données du post mais l'ID suffit pour éditer
-// Bien que ce soit une grande faille de sécurité car il suffit d'avoir l'URL
-// et être connecté avec n'import quel compte pour éditer n'importe quelle annonce
-elseif ( '/annonces/index.php/edit' == $uri
-    && isset($_GET['id']) && isset($_SESSION['login']) && isset($_SESSION['password'])) {
-
-    $layout = new Layout("gui/layout.html" );
-    $vueEdit= new ViewEdit( $layout, $presenter);
-    if (isset($_POST['title']) && isset($_POST['body'])) {
-        $result = $controller->editAction($_GET['id'], $data, $annoncesCheck, $_POST['title'], $_POST['body']);
-
-        if ($result) {
-            $vueEdit->display();
-            header('Location: /annonces/index.php/annonces');
-        }
-    }
-    else {
-        $vueEdit->display();
-    }
-}
-
-// 404 Not Found
 else {
     header('Status: 404 Not Found');
-    echo '<html lang="en">
-            <body>
-                <h1> Error 404: Page Not Found</h1>
-                <button onclick="location.href=\'/annonces/index.php\'">Back to login</button>
-            </body></html>';
+    echo '<html><body><h1>My Page NotFound</h1></body></html>';
 }
+
+?>
