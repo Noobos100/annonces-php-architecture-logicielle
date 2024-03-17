@@ -30,7 +30,7 @@ class UserSqlAccess implements UserAccessInterface
         $result = $this->dataAccess->query($query);
 
         if ( $row = $result->fetch() )
-            $user = new User( $row['login'] , $row['password'], $row['name'], $row['firstName'], $row['date'] );
+            $user = new User( $row['login'] , $row['password']);
 
         $result->closeCursor();
 
