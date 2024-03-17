@@ -23,7 +23,6 @@ class ApiAlternance implements AnnonceAccessInterface
         // paramètres de la requête HTTP
         $query ='?romes='.$romes.'&caller=contact%40domaine%20nom_de_societe&latitude='.$latitudeAix.'&longitude='.$longitudeAix.'&radius='.$radius.'&insee='.$inseeAix;
 
-        echo $apiUrl.$query;
         // initialisation de la connexion à l'API avec CURL
         $curlConnection  = curl_init();
 
