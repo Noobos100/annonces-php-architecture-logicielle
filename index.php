@@ -11,6 +11,7 @@ include_once 'control/Presenter.php';
 
 include_once 'service/AnnoncesChecking.php';
 include_once 'service/UserChecking.php';
+include_once 'service/AnnonceCreation.php';
 
 include_once 'gui/Layout.php';
 include_once 'gui/ViewLogin.php';
@@ -21,10 +22,12 @@ include_once 'gui/ViewCompanyAlternance.php';
 include_once 'gui/ViewAnnoncesAlternance.php';
 include_once 'gui/ViewAnnoncesEmploi.php';
 include_once 'gui/ViewOffreEmploi.php';
+include_once 'gui/ViewCreateAnnonce.php';
 
 use gui\{ViewAnnoncesAlternance,
     ViewAnnoncesEmploi,
     ViewCompanyAlternance,
+    ViewCreateAnnonce,
     ViewLogin,
     ViewAnnonces,
     ViewOffreEmploi,
@@ -33,7 +36,7 @@ use gui\{ViewAnnoncesAlternance,
     Layout};
 use control\{Controllers, Presenter};
 use data\{AnnonceSqlAccess, ApiAlternance, ApiEmploi, UserSqlAccess};
-use service\{AnnoncesChecking, UserChecking};
+use service\{AnnonceCreation, AnnoncesChecking, UserChecking};
 
 $data = null;
 try {
@@ -55,6 +58,9 @@ $annoncesCheck = new AnnoncesChecking() ;
 
 // intialisation du cas d'utilisation service\UserChecking
 $userCheck = new UserChecking();
+
+// initialisation du cas d'utilisation service\AnnonceCreation
+$annonceCreation = new AnnonceCreation();
 
 // intialisation du presenter avec accès aux données de AnnoncesCheking
 $presenter = new Presenter($annoncesCheck);
@@ -83,7 +89,7 @@ if ( '/annonces/' != $uri and '/annonces/index.php' != $uri and '/annonces/index
     if( $error != null )
     {
         $uri='/annonces/index.php/error' ;
-        if( $error == 'Bad login or password, redirecting to login page in 5 seconds...' or $error == 'not connected')
+        if( $error == 'bad login or pwd' or $error == 'not connected')
             $redirect = '/annonces/index.php';
     }
 }
@@ -100,6 +106,11 @@ if ( '/annonces/' == $uri || '/annonces/index.php' == $uri || '/annonces/index.p
     $vueLogin->display();
 }
 elseif ( '/annonces/index.php/annonces' == $uri ){
+    if (isset($_POST['contractType'])) {
+        // création d'une annonce
+        $controller->annonceCreationAction($_SESSION['login'], $_POST, $dataAnnonces, $annonceCreation);
+    }
+
     // affichage de toutes les annonces
 
     $controller->annoncesAction($dataAnnonces, $annoncesCheck);
@@ -116,9 +127,17 @@ elseif ( '/annonces/index.php/post' == $uri
     $controller->postAction($_GET['id'], $dataAnnonces, $annoncesCheck);
 
     $layout = new Layout("gui/layoutLogged.html" );
-    $vuePost= new ViewPost( $layout,  $_SESSION['login'], $presenter );
+    $vuePost= new ViewPost( $layout, $presenter,  $_SESSION['login'] );
 
     $vuePost->display();
+}
+elseif ( '/annonces/index.php/createAnnonce' == $uri ){
+    // affichage du formulaire de création d'une annonce
+
+    $layout = new Layout("gui/layoutLogged.html" );
+    $vueCreateAnnonce = new ViewCreateAnnonce( $layout );
+
+    $vueCreateAnnonce->display();
 }
 elseif ( '/annonces/index.php/error' == $uri ){
     // Affichage d'un message d'erreur
